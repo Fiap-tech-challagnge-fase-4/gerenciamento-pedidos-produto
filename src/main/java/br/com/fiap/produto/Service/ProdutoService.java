@@ -12,8 +12,13 @@ import br.com.fiap.produto.repository.ProdutoRepository;
 @Service
 public class ProdutoService {
 
+
+    private final ProdutoRepository produtoRepository;
+
     @Autowired
-    private ProdutoRepository produtoRepository;
+    public ProdutoService(ProdutoRepository produtoRepository) {
+        this.produtoRepository = produtoRepository;
+    }
     
     // Método para listar todos os produtos
     public List<Produto> listarProduto() {
@@ -27,8 +32,8 @@ public class ProdutoService {
 
     // Método para obter um produto pelo ID
     public Produto obterProduto(Integer id) {
-        Optional<Produto> produto = produtoRepository.findById(id);
-        return produto.orElse(null);
+        return produtoRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Produto com ID " + id + " não encontrado"));
     }
 
     // Método para atualizar um produto existente
@@ -56,14 +61,14 @@ public class ProdutoService {
         //produtoRepository.deleteById(id);
     }
 
-    //Para adicionar enviar valor positivo, para remover, enviar quantidade negativa
-    public Produto atualizarEstoque(Integer produtoId, int quantidade)
+            //Para adicionar enviar valor positivo, para remover, enviar quantidade negativa
+            public Produto atualizarEstoque(Integer produtoId, int quantidade)
     {
         Produto produto = produtoRepository.findById(produtoId).orElse(null);
 
         if(produto != null)
         {
-            produto.setQuantidadeestoque(produto.getQuantidadeestoque() - quantidade);
+            produto.setQuantidadeEstoque(produto.getQuantidadeEstoque() - quantidade);
 
             return produtoRepository.save(produto);
         }
