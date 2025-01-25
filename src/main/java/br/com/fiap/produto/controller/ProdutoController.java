@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import br.com.fiap.produto.Service.ProdutoService;
+import br.com.fiap.produto.service.ProdutoService;
 import br.com.fiap.produto.model.Produto;
 
 import java.util.List;
@@ -48,5 +48,10 @@ public class ProdutoController {
     public Produto atualizarEstoque(@PathVariable Integer id, @PathVariable int quantidade)
     {
         return produtoService.atualizarEstoque(id, quantidade);
+    }
+    @PostMapping("/carregar-produtos-em-massa")
+
+    public void carregarProdutos(@RequestBody List<Produto> produtoRequest) {
+        produtoService.carregarProdutos(produtoRequest);
     }
 }

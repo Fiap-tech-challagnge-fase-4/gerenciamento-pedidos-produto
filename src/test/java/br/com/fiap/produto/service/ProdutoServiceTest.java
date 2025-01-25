@@ -1,7 +1,6 @@
 package br.com.fiap.produto.service;
 
 
-import br.com.fiap.produto.Service.ProdutoService;
 import br.com.fiap.produto.model.Produto;
 import br.com.fiap.produto.repository.ProdutoRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -17,9 +16,9 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
- class ProdutoServiceTest {
+class ProdutoServiceTest {
     @Mock
     private ProdutoRepository produtoRepository;
 
@@ -102,7 +101,18 @@ import static org.mockito.Mockito.when;
 
     @Test
     void devePermitirExcluirUmProduto(){
-        fail("Teste não implementado");
+        //Arrange
+        int idProduto = 1;
+        var produto =  getProduto();
+        when(produtoRepository.findById(any(Integer.class))).thenReturn(java.util.Optional.of(produto));
+        doNothing().when(produtoRepository).deleteById(any(Integer.class));
+
+        //Act
+        produtoService.excluirProduto(idProduto);
+
+        //Assert
+        verify(produtoRepository, times(1)).deleteById(idProduto);
+        verify(produtoRepository).deleteById(any(Integer.class));
     }
 
     @Test
