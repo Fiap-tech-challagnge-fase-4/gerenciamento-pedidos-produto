@@ -1,24 +1,19 @@
-package br.com.fiap.produto.service;
-
-import java.util.List;
+package br.com.fiap.produto.service.impl.impl;
 
 import br.com.fiap.produto.exception.ProdutoException;
-import br.com.fiap.produto.service.impl.ProdutoServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
+import br.com.fiap.produto.model.Produto;
+import br.com.fiap.produto.repository.ProdutoRepository;
+import br.com.fiap.produto.service.impl.ProdutoService;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
-import br.com.fiap.produto.model.Produto;
-import br.com.fiap.produto.repository.ProdutoRepository;
+import java.util.List;
 
 @Service
-public class ProdutoService implements ProdutoServiceImpl {
-
-
+public class ProdutoServiceImpl implements ProdutoService {
     private final ProdutoRepository produtoRepository;
 
-    @Autowired
-    public ProdutoService(ProdutoRepository produtoRepository) {
+    public ProdutoServiceImpl(ProdutoRepository produtoRepository) {
         this.produtoRepository = produtoRepository;
     }
 
@@ -38,7 +33,7 @@ public class ProdutoService implements ProdutoServiceImpl {
     @Override
     public Produto obterProduto(Integer id) {
         return produtoRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Produto com ID " + id + " não encontrado"));
+                .orElseThrow(() -> new ProdutoException("Produto com ID " + id + " não encontrado"));
     }
 
     // Método para atualizar um produto existente
@@ -63,17 +58,16 @@ public class ProdutoService implements ProdutoServiceImpl {
     public void carregarProdutos(List<Produto>produtoList ) {
 
         try {
-            produtoList.stream()
-                    .forEach(produtoRepository::save);
+            produtoList.stream().forEach(produtoRepository::save);
         }catch(DataAccessException e) {
             throw   new ProdutoException("Erro ao salvar o produto");
         }
 
     }
 
-            //Para adicionar enviar valor positivo, para remover, enviar quantidade negativa
-        @Override
-       public Produto atualizarEstoque(Integer produtoId, int quantidade) {
+    //Para adicionar enviar valor positivo, para remover, enviar quantidade negativa
+    @Override
+    public Produto atualizarEstoque(Integer produtoId, int quantidade) {
         Produto produto = produtoRepository.findById(produtoId).orElse(null);
 
         if(produto != null) {

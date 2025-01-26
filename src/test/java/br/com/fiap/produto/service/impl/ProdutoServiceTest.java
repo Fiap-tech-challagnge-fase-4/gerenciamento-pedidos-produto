@@ -1,8 +1,9 @@
-package br.com.fiap.produto.service;
+package br.com.fiap.produto.service.impl;
 
 
 import br.com.fiap.produto.model.Produto;
 import br.com.fiap.produto.repository.ProdutoRepository;
+import br.com.fiap.produto.service.impl.impl.ProdutoServiceImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,7 +24,7 @@ class ProdutoServiceTest {
     private ProdutoRepository produtoRepository;
 
     @InjectMocks
-    private ProdutoService produtoService;
+    private ProdutoServiceImpl produtoService;
     AutoCloseable openMocks;
     @BeforeEach
     public void setUp() {

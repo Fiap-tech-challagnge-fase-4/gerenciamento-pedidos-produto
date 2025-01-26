@@ -1,10 +1,10 @@
 package br.com.fiap.produto.controller;
 
+import br.com.fiap.produto.service.impl.impl.ProdutoServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import br.com.fiap.produto.service.ProdutoService;
 import br.com.fiap.produto.model.Produto;
 
 import java.util.List;
@@ -14,7 +14,7 @@ import java.util.List;
 public class ProdutoController {
 
     @Autowired
-    private ProdutoService produtoService;
+    private ProdutoServiceImpl produtoService;
 
     @GetMapping
     public List<Produto> listarProduto() {
