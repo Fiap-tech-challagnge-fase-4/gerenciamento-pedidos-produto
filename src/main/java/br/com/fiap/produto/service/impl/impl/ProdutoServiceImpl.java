@@ -68,14 +68,11 @@ public class ProdutoServiceImpl implements ProdutoService {
     //Para adicionar enviar valor positivo, para remover, enviar quantidade negativa
     @Override
     public Produto atualizarEstoque(Integer produtoId, int quantidade) {
-        Produto produto = produtoRepository.findById(produtoId).orElse(null);
+        Produto produto = produtoRepository.findById(produtoId).orElseThrow(() -> new ProdutoException("Produto com ID " + produtoId + " não encontrado"));
 
-        if(produto != null) {
             produto.setQuantidadeEstoque(produto.getQuantidadeEstoque() - quantidade);
 
             return produtoRepository.save(produto);
-        }
 
-        return null;
     }
 }
