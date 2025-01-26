@@ -43,7 +43,7 @@ public class ProdutoServiceImpl implements ProdutoService {
             produto.setId(id);
             return produtoRepository.save(produto);
         }
-        throw new IllegalArgumentException("Produto com ID " + id + " não encontrado");
+        throw new ProdutoException("Produto com ID " + id + " não encontrado");
 
     }
 
@@ -70,6 +70,9 @@ public class ProdutoServiceImpl implements ProdutoService {
     public Produto atualizarEstoque(Integer produtoId, int quantidade) {
         Produto produto = produtoRepository.findById(produtoId).orElseThrow(() -> new ProdutoException("Produto com ID " + produtoId + " não encontrado"));
 
+            if (produto.getQuantidadeEstoque() - quantidade < 0) {
+                throw new ProdutoException("Quantidade em estoque insuficiente");
+            }
             produto.setQuantidadeEstoque(produto.getQuantidadeEstoque() - quantidade);
 
             return produtoRepository.save(produto);

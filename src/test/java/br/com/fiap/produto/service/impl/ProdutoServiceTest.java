@@ -118,7 +118,20 @@ class ProdutoServiceTest {
 
     @Test
     void devePermitirAtualizarEstoque(){
-        fail("Teste não implementado");
+        //Arrange
+        Produto produto = getProduto();
+        int quantidade = 1;
+
+        when(produtoRepository.findById(1)).thenReturn(java.util.Optional.of(produto));
+        when(produtoRepository.save(any(Produto.class))).thenReturn(produto);
+
+        //Act
+        Produto produtoObtido = produtoService.atualizarEstoque(1, quantidade);
+
+        //Assert
+        assertThat(produtoObtido).isNotNull();
+        assertThat(produtoObtido.getQuantidadeEstoque()).isEqualTo(produto.getQuantidadeEstoque() );
+
     }
 
     @Test
