@@ -11,6 +11,5 @@ public interface ProdutoService {
     Produto obterProduto(Integer id);
     Produto atualizarProduto(Integer id, Produto produto);
     void excluirProduto(Integer id) ;
-    void carregarProdutos(List<Produto> produtoList);
     public Produto atualizarEstoque(Integer produtoId, int quantidade);
 }

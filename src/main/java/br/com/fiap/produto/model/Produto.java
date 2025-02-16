@@ -1,22 +1,14 @@
 package br.com.fiap.produto.model;
 
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 
 import java.math.BigDecimal;
 
-@Data
-@Entity
+@Getter
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
-
 public class Produto {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private Integer id;
     private String nome;
     private String descricao;
@@ -26,4 +18,17 @@ public class Produto {
     private String imagemUrl;
     private String codigoBarras;
     private String status;
+
+    public Produto(Integer id, String nome, String descricao, BigDecimal preco, int quantidadeEstoque, String categoria, String imagemUrl, String codigoBarras, String status)
+    {
+        this.id = id;
+        this.nome = nome;
+        this.descricao = descricao;
+        this.preco = preco;
+        this.quantidadeEstoque = quantidadeEstoque;
+        this.categoria = categoria;
+        this.imagemUrl = imagemUrl;
+        this.codigoBarras = codigoBarras;
+        this.status = status;
+    }
 }

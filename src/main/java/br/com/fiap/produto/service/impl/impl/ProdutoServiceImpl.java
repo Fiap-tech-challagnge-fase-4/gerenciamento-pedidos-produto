@@ -1,47 +1,59 @@
 package br.com.fiap.produto.service.impl.impl;
 
 import br.com.fiap.produto.exception.ProdutoException;
+import br.com.fiap.produto.mapper.ProdutoMapper;
 import br.com.fiap.produto.model.Produto;
+import br.com.fiap.produto.model.entity.ProdutoEntity;
 import br.com.fiap.produto.repository.ProdutoRepository;
 import br.com.fiap.produto.service.impl.ProdutoService;
-import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service
 public class ProdutoServiceImpl implements ProdutoService {
     private final ProdutoRepository produtoRepository;
+    private final ProdutoMapper produtoMapper;
 
-    public ProdutoServiceImpl(ProdutoRepository produtoRepository) {
+    public ProdutoServiceImpl(ProdutoRepository produtoRepository, ProdutoMapper produtoMapper)
+    {
         this.produtoRepository = produtoRepository;
+        this.produtoMapper = produtoMapper;
     }
 
     // Método para listar todos os produtos
     @Override
     public List<Produto> listarProduto() {
-        return produtoRepository.findAll();
+        List<ProdutoEntity> produtoEntity = produtoRepository.findAll();
+        return produtoEntity.stream().map(produtoMapper::converterProdutoEntityParaProduto).toList();
     }
 
     // Método para criar um novo produto
     @Override
     public Produto criarProduto(Produto produto) {
-        return produtoRepository.save(produto);
+        ProdutoEntity produtoEntity = produtoMapper.converterProdutoParaProdutoEntity(produto);
+        ProdutoEntity produtoEntitySave = produtoRepository.save(produtoEntity);
+        return produtoMapper.converterProdutoEntityParaProduto(produtoEntitySave);
     }
 
     // Método para obter um produto pelo ID
     @Override
     public Produto obterProduto(Integer id) {
-        return produtoRepository.findById(id)
+        ProdutoEntity produtoEntity = produtoRepository.findById(id)
                 .orElseThrow(() -> new ProdutoException("Produto com ID " + id + " não encontrado"));
+        return produtoMapper.converterProdutoEntityParaProduto(produtoEntity);
     }
 
     // Método para atualizar um produto existente
     @Override
     public Produto atualizarProduto(Integer id, Produto produto) {
+
         if (produtoRepository.existsById(id)) {
-            produto.setId(id);
-            return produtoRepository.save(produto);
+            ProdutoEntity produtoEntity = produtoMapper.converterProdutoParaProdutoEntity(produto);
+            produtoEntity.setId(id);
+            produtoRepository.save(produtoEntity);
+
+
+            return produtoMapper.converterProdutoEntityParaProduto(produtoEntity);
         }
         throw new ProdutoException("Produto com ID " + id + " não encontrado");
 
@@ -53,29 +65,18 @@ public class ProdutoServiceImpl implements ProdutoService {
         produtoRepository.deleteById(id);
     }
 
-    // Método para efetuar uma carga de produtos
-    @Override
-    public void carregarProdutos(List<Produto>produtoList ) {
-
-        try {
-            produtoList.stream().forEach(produtoRepository::save);
-        }catch(DataAccessException e) {
-            throw   new ProdutoException("Erro ao salvar o produto");
-        }
-
-    }
-
     //Para adicionar enviar valor positivo, para remover, enviar quantidade negativa
     @Override
     public Produto atualizarEstoque(Integer produtoId, int quantidade) {
-        Produto produto = produtoRepository.findById(produtoId).orElseThrow(() -> new ProdutoException("Produto com ID " + produtoId + " não encontrado"));
+        ProdutoEntity produtoEntity = produtoRepository.findById(produtoId).orElseThrow(() -> new ProdutoException("Produto com ID " + produtoId + " não encontrado"));
 
-            if (produto.getQuantidadeEstoque() - quantidade < 0) {
+            if (produtoEntity.getQuantidadeEstoque() - quantidade <= 0) {
                 throw new ProdutoException("Quantidade em estoque insuficiente");
             }
-            produto.setQuantidadeEstoque(produto.getQuantidadeEstoque() - quantidade);
+            produtoEntity.setQuantidadeEstoque(produtoEntity.getQuantidadeEstoque() - quantidade);
+            produtoRepository.save(produtoEntity);
 
-            return produtoRepository.save(produto);
+            return produtoMapper.converterProdutoEntityParaProduto(produtoEntity);
 
     }
 }

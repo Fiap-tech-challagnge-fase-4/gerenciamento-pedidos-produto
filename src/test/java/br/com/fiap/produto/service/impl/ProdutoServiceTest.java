@@ -1,7 +1,10 @@
+
 package br.com.fiap.produto.service.impl;
 
 
+import br.com.fiap.produto.mapper.ProdutoMapper;
 import br.com.fiap.produto.model.Produto;
+import br.com.fiap.produto.model.entity.ProdutoEntity;
 import br.com.fiap.produto.repository.ProdutoRepository;
 import br.com.fiap.produto.service.impl.impl.ProdutoServiceImpl;
 import org.junit.jupiter.api.AfterEach;
@@ -15,13 +18,15 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 class ProdutoServiceTest {
     @Mock
     private ProdutoRepository produtoRepository;
+
+    @Mock
+    private ProdutoMapper produtoMapper;
 
     @InjectMocks
     private ProdutoServiceImpl produtoService;
@@ -41,8 +46,11 @@ class ProdutoServiceTest {
     void devePermitirCriarUmProduto() {
         // Arrange
         Produto produto = getProduto();
+        ProdutoEntity produtoEntity = getProdutoEntity();
 
-        when(produtoRepository.save(any(Produto.class))).thenReturn(produto);
+        when(produtoMapper.converterProdutoParaProdutoEntity(any(Produto.class))).thenReturn(produtoEntity);
+        when(produtoRepository.save(any(ProdutoEntity.class))).thenReturn(produtoEntity);
+        when(produtoMapper.converterProdutoEntityParaProduto(any(ProdutoEntity.class))).thenReturn(produto);
 
         // Act
         Produto produtoObtido = produtoService.criarProduto(produto);
@@ -56,48 +64,59 @@ class ProdutoServiceTest {
     void devePermitirAtualizarUmProduto() {
         // Arrange
         Produto produto = getProduto();
+        ProdutoEntity produtoEntity = getProdutoEntity();
 
+        when(produtoMapper.converterProdutoParaProdutoEntity(any(Produto.class))).thenReturn(produtoEntity);
         when(produtoRepository.existsById(1)).thenReturn(true);
-        when(produtoRepository.save(any(Produto.class))).thenReturn(produto);
+        when(produtoRepository.save(any(ProdutoEntity.class))).thenReturn(produtoEntity);
+        when(produtoMapper.converterProdutoEntityParaProduto(any(ProdutoEntity.class))).thenReturn(produto);
+
 
         // Act
         Produto produtoObtido = produtoService.atualizarProduto(1, produto);
 
         // Assert
         assertThat(produtoObtido).isNotNull();
-        assertThat(produtoObtido.getNome()).isEqualTo(produto.getNome());
-        assertThat(produtoObtido.getDescricao()).isEqualTo(produto.getDescricao());
+        assertThat(produtoObtido.getNome()).isEqualTo(produtoEntity.getNome());
+        assertThat(produtoObtido.getDescricao()).isEqualTo(produtoEntity.getDescricao());
     }
     @Test
     void devePermitirListarTodosProdutos(){
         //Arrange
         Produto produto = getProduto();
+        ProdutoEntity produtoEntity = getProdutoEntity();
 
-        when(produtoRepository.findAll()).thenReturn(List.of(produto));
+        when(produtoMapper.converterProdutoParaProdutoEntity(any(Produto.class))).thenReturn(produtoEntity);
+        when(produtoRepository.findAll()).thenReturn(List.of(produtoEntity));
+        when(produtoMapper.converterProdutoEntityParaProduto(any(ProdutoEntity.class))).thenReturn(produto);
+
 
         //Act
         List<Produto> produtosObtidos = produtoService.listarProduto();
 
         //Assert
-        assertThat(produtosObtidos).isNotNull();
         assertThat(produtosObtidos).hasSize(1);
-        assertThat(produtosObtidos.get(0).getNome()).isEqualTo(produto.getNome());
+        assertThat(produtosObtidos.get(0).getNome()).isEqualTo(produtoEntity.getNome());
     }
 
     @Test
     void devePermitirObterUmProdutoPorId(){
         //Arrange
         Produto produto = getProduto();
+        ProdutoEntity produtoEntity = getProdutoEntity();
 
-        when(produtoRepository.findById(1)).thenReturn(java.util.Optional.of(produto));
+        when(produtoMapper.converterProdutoParaProdutoEntity(any(Produto.class))).thenReturn(produtoEntity);
+        when(produtoRepository.findById(1)).thenReturn(java.util.Optional.of(produtoEntity));
+        when(produtoMapper.converterProdutoEntityParaProduto(any(ProdutoEntity.class))).thenReturn(produto);
 
         //Act
         Produto produtoObtido = produtoService.obterProduto(1);
 
         //Assert
+        verify(produtoRepository, times(1)).findById(anyInt());
         assertThat(produtoObtido).isNotNull();
-        assertThat(produtoObtido.getNome()).isEqualTo(produto.getNome());
-        assertThat(produtoObtido.getDescricao()).isEqualTo(produto.getDescricao());
+        assertThat(produtoObtido.getNome()).isEqualTo(produtoEntity.getNome());
+        assertThat(produtoObtido.getDescricao()).isEqualTo(produtoEntity.getDescricao());
     }
 
     @Test
@@ -105,7 +124,8 @@ class ProdutoServiceTest {
         //Arrange
         int idProduto = 1;
         var produto =  getProduto();
-        when(produtoRepository.findById(any(Integer.class))).thenReturn(java.util.Optional.of(produto));
+        ProdutoEntity produtoEntity = getProdutoEntity();
+        when(produtoRepository.findById(any(Integer.class))).thenReturn(java.util.Optional.of(produtoEntity));
         doNothing().when(produtoRepository).deleteById(any(Integer.class));
 
         //Act
@@ -122,9 +142,12 @@ class ProdutoServiceTest {
         Produto produto = getProduto();
         int quantidade = 1;
 
-        when(produtoRepository.findById(1)).thenReturn(java.util.Optional.of(produto));
-        when(produtoRepository.save(any(Produto.class))).thenReturn(produto);
+        ProdutoEntity produtoEntity = getProdutoEntity();
+        when(produtoMapper.converterProdutoParaProdutoEntity(any(Produto.class))).thenReturn(produtoEntity);
 
+        when(produtoRepository.findById(1)).thenReturn(java.util.Optional.of(produtoEntity));
+        when(produtoRepository.save(any(ProdutoEntity.class))).thenReturn(produtoEntity);
+        when(produtoMapper.converterProdutoEntityParaProduto(any(ProdutoEntity.class))).thenReturn(produto);
         //Act
         Produto produtoObtido = produtoService.atualizarEstoque(1, quantidade);
 
@@ -140,8 +163,21 @@ class ProdutoServiceTest {
         assertThat(produtoService).isNotNull();
     }
 
-    private static Produto getProduto()
-    {
+    private static ProdutoEntity getProdutoEntity() {
+        return ProdutoEntity.builder()
+                .id(1)
+                .nome("Spaghetti")
+                .descricao("Macarrão com toque italiano")
+                .categoria("Massa")
+                .codigoBarras("123456789")
+                .preco(BigDecimal.valueOf(20.0))
+                .quantidadeEstoque(10)
+                .imagemUrl("https://www.google.com")
+                .status("Ativo")
+                .build();
+    }
+
+    private static Produto getProduto() {
         return Produto.builder()
                 .id(1)
                 .nome("Spaghetti")
@@ -158,3 +194,4 @@ class ProdutoServiceTest {
 
 
 }
+
