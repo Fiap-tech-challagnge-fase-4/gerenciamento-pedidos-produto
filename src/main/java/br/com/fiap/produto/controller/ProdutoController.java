@@ -1,20 +1,27 @@
 package br.com.fiap.produto.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import br.com.fiap.produto.mapper.ProdutoMapper;
+import br.com.fiap.produto.model.dto.ProdutoRequestDTO;
+import br.com.fiap.produto.model.dto.ProdutoResponseDTO;
+import br.com.fiap.produto.service.impl.impl.ProdutoServiceImpl;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import br.com.fiap.produto.Service.ProdutoService;
 import br.com.fiap.produto.model.Produto;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/produto")
+@RequestMapping("/api/produtos")
 public class ProdutoController {
 
-    @Autowired
-    private ProdutoService produtoService;
+    private final ProdutoServiceImpl produtoService;
+    private final ProdutoMapper produtoMapper;
+
+    public ProdutoController(ProdutoServiceImpl produtoService, ProdutoMapper produtoMapper) {
+        this.produtoService = produtoService;
+        this.produtoMapper = produtoMapper;
+    }
 
     @GetMapping
     public List<Produto> listarProduto() {
@@ -22,31 +29,40 @@ public class ProdutoController {
     }
 
     @PostMapping
-    public Produto criarProduto(@RequestBody Produto produto) {
-        return produtoService.criarProduto(produto);
+    @ResponseStatus(HttpStatus.CREATED)
+    public ProdutoResponseDTO criarProduto(@RequestBody ProdutoRequestDTO produtoRequestDTO) {
+        Produto produto = produtoMapper.converterRequestDTOParaProduto(produtoRequestDTO);
+        Produto produtoCriado = produtoService.criarProduto(produto);
+
+        return produtoMapper.converterProdutoParaResponseDTO(produtoCriado);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Produto> obterProduto(@PathVariable Integer id) {
+    @ResponseStatus(HttpStatus.OK)
+    public ProdutoResponseDTO obterProduto(@PathVariable Integer id) {
         Produto produto = produtoService.obterProduto(id);
-        return produto != null ? ResponseEntity.ok(produto) : ResponseEntity.notFound().build();
+        return produtoMapper.converterProdutoParaResponseDTO(produto);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Produto> atualizarProduto(@PathVariable Integer id, @RequestBody Produto produto) {
+    @ResponseStatus(HttpStatus.OK)
+    public ProdutoResponseDTO atualizarProduto(@PathVariable Integer id, @RequestBody ProdutoRequestDTO produtoRequestDTO) {
+        Produto produto = produtoMapper.converterRequestDTOParaProduto(produtoRequestDTO);
         Produto produtoAtualizado = produtoService.atualizarProduto(id, produto);
-        return produtoAtualizado != null ? ResponseEntity.ok(produtoAtualizado) : ResponseEntity.notFound().build();
+        return produtoMapper.converterProdutoParaResponseDTO(produtoAtualizado);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> excluirProduto(@PathVariable Integer id) {
+    @ResponseStatus(HttpStatus.OK)
+    public void excluirProduto(@PathVariable Integer id) {
         produtoService.excluirProduto(id);
-        return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/atualizarEstoque/{id}/{quantidade}")
-    public Produto atualizarEstoque(@PathVariable Integer id, @PathVariable int quantidade)
+    @ResponseStatus(HttpStatus.OK)
+    public ProdutoResponseDTO atualizarEstoque(@PathVariable Integer id, @PathVariable int quantidade)
     {
-        return produtoService.atualizarEstoque(id, quantidade);
+        Produto produto = produtoService.atualizarEstoque(id, quantidade);
+        return produtoMapper.converterProdutoParaResponseDTO(produto);
     }
 }

@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ProdutoRequestDTO",
+  "type": "object",
+  "properties": {
+    "idProduto": {
+      "type": "integer"
+    },
+    "nome": {
+      "type": "string"
+    },
+    "descricao": {
+      "type": "string"
+    },
+    "preco": {
+      "type": "number"
+    },
+    "quantidadeEstoque": {
+      "type": "integer"
+    },
+    "categoria": {
+      "type": ["string", "null"]
+    },
+    "imagemUrl": {
+      "type": ["string", "null"]
+    },
+    "codigoBarras": {
+      "type": ["string", "null"]
+    },
+    "status": {
+      "type": "string"
+    }
+  },
+  "required": ["nome", "descricao", "preco", "quantidadeEstoque", "status"]
+}
