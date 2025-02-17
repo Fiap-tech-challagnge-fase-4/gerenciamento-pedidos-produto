@@ -19,16 +19,4 @@ public class Produto {
     private String codigoBarras;
     private String status;
 
-    public Produto(Integer id, String nome, String descricao, BigDecimal preco, int quantidadeEstoque, String categoria, String imagemUrl, String codigoBarras, String status)
-    {
-        this.id = id;
-        this.nome = nome;
-        this.descricao = descricao;
-        this.preco = preco;
-        this.quantidadeEstoque = quantidadeEstoque;
-        this.categoria = categoria;
-        this.imagemUrl = imagemUrl;
-        this.codigoBarras = codigoBarras;
-        this.status = status;
-    }
 }

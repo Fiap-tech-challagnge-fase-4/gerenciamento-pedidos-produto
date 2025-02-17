@@ -39,7 +39,7 @@ public class ProdutoServiceImpl implements ProdutoService {
     @Override
     public Produto obterProduto(Integer id) {
         ProdutoEntity produtoEntity = produtoRepository.findById(id)
-                .orElseThrow(() -> new ProdutoException("Produto com ID " + id + " não encontrado"));
+                .orElseThrow(() -> new ProdutoException("produto não encontrado"));
         return produtoMapper.converterProdutoEntityParaProduto(produtoEntity);
     }
 

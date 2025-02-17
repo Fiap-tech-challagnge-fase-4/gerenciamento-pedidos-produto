@@ -123,7 +123,6 @@ class ProdutoServiceTest {
     void devePermitirExcluirUmProduto(){
         //Arrange
         int idProduto = 1;
-        var produto =  getProduto();
         ProdutoEntity produtoEntity = getProdutoEntity();
         when(produtoRepository.findById(any(Integer.class))).thenReturn(java.util.Optional.of(produtoEntity));
         doNothing().when(produtoRepository).deleteById(any(Integer.class));

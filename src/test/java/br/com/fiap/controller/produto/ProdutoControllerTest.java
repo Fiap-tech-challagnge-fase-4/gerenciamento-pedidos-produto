@@ -4,8 +4,6 @@ import br.com.fiap.produto.controller.ProdutoController;
 import br.com.fiap.produto.mapper.ProdutoMapper;
 import br.com.fiap.produto.model.Produto;
 import br.com.fiap.produto.model.dto.ProdutoRequestDTO;
-import br.com.fiap.produto.model.dto.ProdutoResponseDTO;
-import br.com.fiap.produto.service.impl.ProdutoService;
 import br.com.fiap.produto.service.impl.impl.ProdutoServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
@@ -28,7 +26,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class ProdutoControllerTest {
+class ProdutoControllerTest {
 
     private MockMvc mockMvc;
 
@@ -58,7 +56,7 @@ public class ProdutoControllerTest {
 
     @Test
     void deveListarProdutos() throws Exception {
-        Produto produto = new Produto(1, "Spaghetti", "Macarrão", new BigDecimal("10.00"), 10, null, null, null, "ATIVO");
+        Produto produto = gerarUmProduto();
         when(produtoService.listarProduto()).thenReturn(Collections.singletonList(produto));
 
         mockMvc.perform(get("/api/produtos"))
@@ -70,9 +68,7 @@ public class ProdutoControllerTest {
     @Test
     void deveCriarProduto() throws Exception {
         ProdutoRequestDTO requestDTO = new ProdutoRequestDTO("Spaghetti", "Macarrão", new BigDecimal("10.00"), 10, null, null, null, "ATIVO");
-        Produto produto = new Produto(1, "Spaghetti", "Macarrão", new BigDecimal("10.00"), 10, null, null, null, "ATIVO");
-        ProdutoResponseDTO responseDTO = new ProdutoResponseDTO(1, "Spaghetti", "Macarrão", new BigDecimal("10.00"), 10, null, null, null, "ATIVO");
-
+        Produto produto = gerarUmProduto();
         when(produtoService.criarProduto(any(Produto.class))).thenReturn(produto);
 
         mockMvc.perform(post("/api/produtos")
@@ -85,9 +81,7 @@ public class ProdutoControllerTest {
 
     @Test
     void deveObterProduto() throws Exception {
-        Produto produto = new Produto(1, "Spaghetti", "Macarrão", new BigDecimal("10.00"), 10, null, null, null, "ATIVO");
-        ProdutoResponseDTO responseDTO = new ProdutoResponseDTO(1, "Spaghetti", "Macarrão", new BigDecimal("10.00"), 10, null, null, null, "ATIVO");
-
+        Produto produto = gerarUmProduto();
         when(produtoService.obterProduto(anyInt())).thenReturn(produto);
 
         mockMvc.perform(get("/api/produtos/1"))
@@ -99,9 +93,7 @@ public class ProdutoControllerTest {
     @Test
     void deveAtualizarProduto() throws Exception {
         ProdutoRequestDTO requestDTO = new ProdutoRequestDTO("Spaghetti", "Macarrão", new BigDecimal("10.00"), 10, null, null, null, "ATIVO");
-        Produto produto = new Produto(1, "Spaghetti", "Macarrão", new BigDecimal("10.00"), 10, null, null, null, "ATIVO");
-        ProdutoResponseDTO responseDTO = new ProdutoResponseDTO(1, "Spaghetti", "Macarrão", new BigDecimal("10.00"), 10, null, null, null, "ATIVO");
-
+        Produto produto = gerarUmProduto();
         when(produtoService.atualizarProduto(anyInt(), any(Produto.class))).thenReturn(produto);
 
         mockMvc.perform(put("/api/produtos/1")
@@ -117,5 +109,22 @@ public class ProdutoControllerTest {
         mockMvc.perform(delete("/api/produtos/1"))
                 .andExpect(status().isOk());
     }
+
+    Produto gerarUmProduto()
+    {
+        return Produto.builder()
+                .id(1)
+                .nome("Spaghetti")
+                .descricao("Macarrão")
+                .preco(new BigDecimal("10.00"))
+                .quantidadeEstoque(10)
+                .categoria(null)
+                .imagemUrl(null)
+                .codigoBarras(null)
+                .status("ATIVO")
+                .build();
+    }
+
+
 
 }

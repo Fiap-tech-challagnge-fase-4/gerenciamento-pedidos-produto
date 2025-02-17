@@ -26,7 +26,7 @@ import static org.hamcrest.Matchers.hasKey;
 @AutoConfigureTestDatabase
 @ActiveProfiles("test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,classes = ProdutoApplication.class)
-public class ProutoControllerIT {
+class ProutoControllerIT {
 
     @LocalServerPort
     private int port;

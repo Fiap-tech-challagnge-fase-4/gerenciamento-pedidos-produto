@@ -9,17 +9,16 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ProdutoMapper {
     public Produto converterRequestDTOParaProduto(ProdutoRequestDTO produtoRequestDTO) {
-        return new Produto(
-            null,
-            produtoRequestDTO.nome(),
-            produtoRequestDTO.descricao(),
-            produtoRequestDTO.preco(),
-            produtoRequestDTO.quantidadeEstoque(),
-            produtoRequestDTO.categoria(),
-            produtoRequestDTO.imagemUrl(),
-            produtoRequestDTO.codigoBarras(),
-            produtoRequestDTO.status()
-        );
+        return Produto.builder()
+                .nome(produtoRequestDTO.nome())
+                .descricao(produtoRequestDTO.descricao())
+                .preco(produtoRequestDTO.preco())
+                .quantidadeEstoque(produtoRequestDTO.quantidadeEstoque())
+                .categoria(produtoRequestDTO.categoria())
+                .imagemUrl(produtoRequestDTO.imagemUrl())
+                .codigoBarras(produtoRequestDTO.codigoBarras())
+                .status(produtoRequestDTO.status())
+                .build();
     }
 
     public ProdutoResponseDTO converterProdutoParaResponseDTO(Produto produto) {
@@ -38,18 +37,17 @@ public class ProdutoMapper {
     }
 
     public Produto converterProdutoEntityParaProduto(ProdutoEntity produtoEntity) {
-        return new Produto(
-        	produtoEntity.getId(),
-        	produtoEntity.getNome(),
-        	produtoEntity.getDescricao(),
-            produtoEntity.getPreco(),
-            produtoEntity.getQuantidadeEstoque(),
-            produtoEntity.getCategoria(),
-            produtoEntity.getImagemUrl(),
-            produtoEntity.getCodigoBarras(),
-            produtoEntity.getStatus()
-
-        );
+        return Produto.builder()
+                .id(produtoEntity.getId())
+                .nome(produtoEntity.getNome())
+                .descricao(produtoEntity.getDescricao())
+                .preco(produtoEntity.getPreco())
+                .quantidadeEstoque(produtoEntity.getQuantidadeEstoque())
+                .categoria(produtoEntity.getCategoria())
+                .imagemUrl(produtoEntity.getImagemUrl())
+                .codigoBarras(produtoEntity.getCodigoBarras())
+                .status(produtoEntity.getStatus())
+                .build();
     }
 
     public ProdutoEntity converterProdutoParaProdutoEntity(Produto produto) {
